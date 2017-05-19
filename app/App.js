@@ -28,9 +28,9 @@ class App extends Component {
 
     fileReader.onload = () => {
       // console.log(fileReader.result);
-      for (let i = 0; i < fileReader.result.length; i++) {
-        // console.log(fileReader.result[i] + ' => ' + fileReader.result[i].charCodeAt(0));
-      }
+      // for (let i = 0; i < fileReader.result.length; i++) {
+      //   console.log(fileReader.result[i] + ' => ' + fileReader.result[i].charCodeAt(0));
+      // }
       this.setState({ code: fileReader.result });
     };
   }
@@ -39,7 +39,6 @@ class App extends Component {
     return (
       <div>
         <form style={{textAlign: 'center'}}>
-          {/*<button onClick={this.handleChooseFile}>LOAD FILE</button>*/}
           <input 
             ref={element => this.fileInput = element} 
             onChange={this.handleLoadFile}
