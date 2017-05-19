@@ -1,0 +1,21 @@
+#code {
+  font-size: 1.3rem;
+}
+
+form {
+  margin-top: 40px;
+}
+
+.loadFileButton {
+  border: 2px solid salmon;
+  font-size: 16px;
+  color: salmon;
+  padding: 10px;
+  font-family: monospace;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.loadFileButton:hover {
+  opacity: 0.9;
+}

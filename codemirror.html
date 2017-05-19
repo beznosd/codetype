@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>codetype</title>
+  <link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css">
+  <link rel="stylesheet" href="node_modules/codemirror/theme/monokai.css">
+  <link rel="stylesheet" href="node_modules/codemirror/theme/material.css">
+</head>
+<body>
+  <!-- <textarea id="myTextArea" cols="30" rows="10"></textarea> -->
+  <div id="editor"></div>
+  <textarea name="" id="" cols="30" rows="10"></textarea>
+  <script src="node_modules/codemirror/lib/codemirror.js"></script>
+  <script src="node_modules/codemirror/mode/javascript/javascript.js"></script>
+  <script>
+    // var myCodeMirror = CodeMirror(document.body, {
+    //   value: "function myScript(){return 100;}\n",
+    // });
+    // var myTextarea = document.getElementById('myTextArea');
+    var myCodeMirror = CodeMirror(editor, {
+      value: "function myScript() {\n\treturn 100;\n}\n",
+      mode:  "javascript",
+      lineNumbers: true,
+      theme: "material",
+      tabSize: 2
+    });
+
+  </script>
+</body>
+</html>
