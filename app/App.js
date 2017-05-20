@@ -49,7 +49,7 @@ class App extends Component {
             id="file"
             hidden
           />
-          <label className="loadFileButton" htmlFor="file">LOAD FILE</label>
+          <label className="load-file-button" htmlFor="file">LOAD FILE</label>
         </form>
         <br/>
         <Code code={this.state.code} />

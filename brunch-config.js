@@ -6,7 +6,8 @@ module.exports = {
   },
   npm: {
     styles: {
-      'prismjs': ['themes/prism.css']
+      'prismjs': ['themes/prism.css'],
+      'normalize.css': ['normalize.css']
     }
   }
 };
