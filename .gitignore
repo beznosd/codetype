@@ -30,3 +30,5 @@ public/
 
 # Bower stuff.
 bower_components/
+
+test.js

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import fs from 'fs';
 
 import Code from 'Code';
 
@@ -8,8 +9,8 @@ class App extends Component {
     super(props);
 
     this.state = {
-      // code: 'var days = 31;'
-      code: ''
+      code: 'var days = 28;\nvar summ = 100;\n'
+      // code: ''
     };
 
     this.handleChooseFile = this.handleChooseFile.bind(this);
@@ -27,7 +28,7 @@ class App extends Component {
     fileReader.readAsText(file);
 
     fileReader.onload = () => {
-      // console.log(fileReader.result);
+      console.log(fileReader.result);
       // for (let i = 0; i < fileReader.result.length; i++) {
       //   console.log(fileReader.result[i] + ' => ' + fileReader.result[i].charCodeAt(0));
       // }
