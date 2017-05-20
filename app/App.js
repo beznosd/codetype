@@ -9,7 +9,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      code: 'var days = 28;\nvar summ = 100;\n'
+      code: '// code sample\n\nvar days = 28;\nvar summ = 100;\n\nconsole.log(days * summ);'
       // code: ''
     };
 
