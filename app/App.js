@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import fs from 'fs';
 
-import Code from 'Code';
+import Code from './Code';
 
 class App extends Component {
   constructor(props) {
@@ -39,7 +38,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <form style={{textAlign: 'center'}}>
+        <form style={{ textAlign: 'center' }}>
           <input 
             ref={element => this.fileInput = element} 
             onChange={this.handleLoadFile}
@@ -51,7 +50,7 @@ class App extends Component {
           />
           <label className="load-file-button" htmlFor="file">LOAD FILE</label>
         </form>
-        <br/>
+        <br />
         <Code code={this.state.code} />
       </div>
     );
