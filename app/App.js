@@ -43,7 +43,6 @@ class App extends Component {
             ref={element => this.fileInput = element} 
             onChange={this.handleLoadFile}
             type="file"
-            name="file"
             className="file"
             id="file"
             hidden

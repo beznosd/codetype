@@ -16,6 +16,9 @@ rules:
   no-trailing-spaces: off
   max-len: off
   no-return-assign: off
+  class-methods-use-this: off
+  no-param-reassign: off
+  no-plusplus: off
   react/prefer-stateless-function: warn
   react/self-closing-comp: warn
   react/jsx-filename-extension: off
