@@ -28,9 +28,6 @@ class App extends Component {
 
     fileReader.onload = () => {
       console.log(fileReader.result);
-      // for (let i = 0; i < fileReader.result.length; i++) {
-      //   console.log(fileReader.result[i] + ' => ' + fileReader.result[i].charCodeAt(0));
-      // }
       this.setState({ code: fileReader.result });
     };
   }
