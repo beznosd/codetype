@@ -14,22 +14,19 @@ class Code extends Component {
   componentDidMount() {
     document.addEventListener('keypress', this.handleWindowKeyPress.bind(this));
     document.addEventListener('keydown', this.handleWindowKeyDown.bind(this));
-
-    // const el = document.querySelector('.char.topass');
-    // console.log(el.offsetWidth);
-    // console.dir(el);
   }
 
   handleWindowKeyPress(e) {
     const cursor = this.cursor;
     const leftCursorPos = getComputedStyle(cursor).left;
     const cursorCorrecting = this.state.cursorCorrecting;
+    console.log(getComputedStyle(cursor).left);
 
     if (cursorCorrecting === 1) {
-      cursor.style.left = `${parseInt(leftCursorPos, 10) + 9}px`;
+      cursor.style.left = `${parseFloat(leftCursorPos) + 9.2}px`;
       this.setState({ cursorCorrecting: 0 });
     } else {
-      cursor.style.left = `${parseInt(leftCursorPos, 10) + 10}px`;
+      cursor.style.left = `${parseFloat(leftCursorPos) + 10}px`;
       this.setState({ cursorCorrecting: 1 });
     }
   }
@@ -41,10 +38,10 @@ class Code extends Component {
       const cursorCorrecting = this.state.cursorCorrecting;
 
       if (cursorCorrecting === 0) {
-        cursor.style.left = `${parseInt(leftCursorPos, 10) - 9}px`;
+        cursor.style.left = `${parseFloat(leftCursorPos, 10) - 9.2}px`;
         this.setState({ cursorCorrecting: 1 });
       } else {
-        cursor.style.left = `${parseInt(leftCursorPos, 10) - 10}px`;
+        cursor.style.left = `${parseFloat(leftCursorPos, 10) - 10}px`;
         this.setState({ cursorCorrecting: 0 });
       }
     }
