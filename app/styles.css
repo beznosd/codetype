@@ -29,3 +29,19 @@ form {
   padding: 20px;
   border-top: 1px solid salmon;
 }
+
+.code {
+  position: relative;
+}
+
+/* Cursor */
+
+.cursor {
+  position: absolute;
+  width: 10px;
+  height: 18px;
+  background: #5ce600;
+  opacity: 0.6;
+  top: 0;
+  /*left: 80px;*/
+}

@@ -3,6 +3,53 @@ import DOMPurify from 'dompurify';
 import Prism from 'prismjs';
 
 class Code extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      cursorCorrecting: 0,
+    };
+  }
+
+  componentDidMount() {
+    document.addEventListener('keypress', this.handleWindowKeyPress.bind(this));
+    document.addEventListener('keydown', this.handleWindowKeyDown.bind(this));
+
+    // const el = document.querySelector('.char.topass');
+    // console.log(el.offsetWidth);
+    // console.dir(el);
+  }
+
+  handleWindowKeyPress(e) {
+    const cursor = this.cursor;
+    const leftCursorPos = getComputedStyle(cursor).left;
+    const cursorCorrecting = this.state.cursorCorrecting;
+
+    if (cursorCorrecting === 1) {
+      cursor.style.left = `${parseInt(leftCursorPos, 10) + 9}px`;
+      this.setState({ cursorCorrecting: 0 });
+    } else {
+      cursor.style.left = `${parseInt(leftCursorPos, 10) + 10}px`;
+      this.setState({ cursorCorrecting: 1 });
+    }
+  }
+
+  handleWindowKeyDown(e) {
+    if (e.which === 8) {
+      const cursor = this.cursor;
+      const leftCursorPos = getComputedStyle(this.cursor).left;
+      const cursorCorrecting = this.state.cursorCorrecting;
+
+      if (cursorCorrecting === 0) {
+        cursor.style.left = `${parseInt(leftCursorPos, 10) - 9}px`;
+        this.setState({ cursorCorrecting: 1 });
+      } else {
+        cursor.style.left = `${parseInt(leftCursorPos, 10) - 10}px`;
+        this.setState({ cursorCorrecting: 0 });
+      }
+    }
+  }
+
   render() {
     const highlightedCode = Prism.highlight(this.props.code, Prism.languages.javascript);
     
@@ -25,7 +72,10 @@ class Code extends Component {
 
     return (
       <div className="code-wrapper">
-        <pre dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(codeToRender) }}></pre>
+        <div className="code">
+          <pre dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(codeToRender) }}></pre>
+          <span ref={el => this.cursor = el} className="cursor"></span>
+        </div>
       </div>
     );
   }
