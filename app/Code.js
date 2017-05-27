@@ -18,15 +18,15 @@ class Code extends Component {
 
   handleWindowKeyPress(e) {
     const cursor = this.cursor;
-    const leftCursorPos = getComputedStyle(cursor).left;
+    const leftCursorPos = parseFloat(getComputedStyle(cursor).left);
     const cursorCorrecting = this.state.cursorCorrecting;
     console.log(getComputedStyle(cursor).left);
 
     if (cursorCorrecting === 1) {
-      cursor.style.left = `${parseFloat(leftCursorPos) + 9.2}px`;
+      cursor.style.left = `${leftCursorPos + 9.2}px`;
       this.setState({ cursorCorrecting: 0 });
     } else {
-      cursor.style.left = `${parseFloat(leftCursorPos) + 10}px`;
+      cursor.style.left = `${leftCursorPos + 10}px`;
       this.setState({ cursorCorrecting: 1 });
     }
   }
@@ -34,14 +34,18 @@ class Code extends Component {
   handleWindowKeyDown(e) {
     if (e.which === 8) {
       const cursor = this.cursor;
-      const leftCursorPos = getComputedStyle(this.cursor).left;
+      const leftCursorPos = parseFloat(getComputedStyle(cursor).left);
       const cursorCorrecting = this.state.cursorCorrecting;
 
+      if (leftCursorPos <= 0) {
+        return;
+      }
+
       if (cursorCorrecting === 0) {
-        cursor.style.left = `${parseFloat(leftCursorPos, 10) - 9.2}px`;
+        cursor.style.left = `${leftCursorPos - 9.2}px`;
         this.setState({ cursorCorrecting: 1 });
       } else {
-        cursor.style.left = `${parseFloat(leftCursorPos, 10) - 10}px`;
+        cursor.style.left = `${leftCursorPos - 10}px`;
         this.setState({ cursorCorrecting: 0 });
       }
     }
