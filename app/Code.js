@@ -8,19 +8,42 @@ class Code extends Component {
 
     this.state = {
       cursorCorrecting: 0,
+      symbolToPass: ''
     };
   }
 
   componentDidMount() {
     document.addEventListener('keypress', this.handleWindowKeyPress.bind(this));
     document.addEventListener('keydown', this.handleWindowKeyDown.bind(this));
+
+    const toPass = document.getElementsByClassName('topass')[0];
+    this.setState({ symbolToPass: toPass });
+    // console.log(toPass.innerText);
   }
 
+  // for trivial keys
   handleWindowKeyPress(e) {
+    // cheking the symbol
+    const symbolToPass = this.state.symbolToPass;
+
+    const typedSymbolCode = e.which;
+    const symbolToPassCode = symbolToPass.innerText.charCodeAt(0);
+    
+    if (typedSymbolCode === symbolToPassCode) {
+      symbolToPass.classList.remove('topass');
+      symbolToPass.classList.add('passed');
+      
+      // this.setState({ symbolToPass: symbolToPass.nextElementSibling });
+    } else {
+      symbolToPass.classList.add('notpassed');
+    }
+
+    this.setState({ symbolToPass: symbolToPass.nextElementSibling });
+
+    // moving the cursor
     const cursor = this.cursor;
     const leftCursorPos = parseFloat(getComputedStyle(cursor).left);
     const cursorCorrecting = this.state.cursorCorrecting;
-    console.log(getComputedStyle(cursor).left);
 
     if (cursorCorrecting === 1) {
       cursor.style.left = `${leftCursorPos + 9.2}px`;
@@ -31,8 +54,10 @@ class Code extends Component {
     }
   }
 
+  // for backspace
   handleWindowKeyDown(e) {
     if (e.which === 8) {
+      // moving the cursor
       const cursor = this.cursor;
       const leftCursorPos = parseFloat(getComputedStyle(cursor).left);
       const cursorCorrecting = this.state.cursorCorrecting;

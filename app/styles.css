@@ -34,6 +34,15 @@ form {
   position: relative;
 }
 
+.char.topass {
+  opacity: 0.5;
+}
+
+.char.notpassed {
+  /*color: red;*/
+  background: rgba(255, 0, 0, 0.5);
+}
+
 /* Cursor */
 
 .cursor {
