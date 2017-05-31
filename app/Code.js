@@ -21,6 +21,30 @@ class Code extends Component {
     // console.log(toPass.innerText);
   }
 
+  getNextToPass(domNode) {
+    let next = domNode.nextElementSibling;
+    if (next !== null && next.classList.contains('topass')) {
+      return next;
+    }
+
+    next = domNode.parentElement.nextElementSibling;
+    if (next !== null && next.classList.contains('topass')) {
+      return next;
+    }
+
+    // next = next.firstElementChild;
+    // if (next !== null && next.classList.contains('topass')) {
+    //   return next;
+    // }
+
+    console.log('error in getNextToPass');
+    return 'error';
+  }
+
+  getPrevToPass() {
+
+  }
+
   // for trivial keys
   handleWindowKeyPress(e) {
     // cheking the symbol
@@ -28,6 +52,11 @@ class Code extends Component {
 
     const typedSymbolCode = e.which;
     const symbolToPassCode = symbolToPass.innerText.charCodeAt(0);
+
+    // when new line, do nothing if not typed 'enter'
+    if (symbolToPassCode === 10 && typedSymbolCode !== 13) {
+      return;
+    }
     
     if (typedSymbolCode === symbolToPassCode) {
       symbolToPass.classList.remove('topass');
@@ -38,7 +67,7 @@ class Code extends Component {
       symbolToPass.classList.add('notpassed');
     }
 
-    this.setState({ symbolToPass: symbolToPass.nextElementSibling });
+    this.setState({ symbolToPass: this.getNextToPass(symbolToPass) });
 
     // moving the cursor
     const cursor = this.cursor;
