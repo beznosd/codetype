@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import DOMPurify from 'dompurify';
 import Prism from 'prismjs';
-// import hashSum from 'hash-sum';
+// import hashSum from 'hash-sum'; //reached
 
 class Code extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      firstSymbol: null,
+      lastSymbol: null,
       currentSymbol: null,
       cursorCorrecting: 0,
       leftCursorPos: 0,
-      topCursorPos: 0 
+      topCursorPos: 0,
+      linesLastCursorPositions: []
     };
   }
 
@@ -19,23 +22,36 @@ class Code extends Component {
     document.addEventListener('keypress', this.handleWindowKeyPress.bind(this));
     document.addEventListener('keydown', this.handleWindowKeyDown.bind(this));
 
-    const toPass = document.getElementsByClassName('topass')[0];
-    this.setState({ currentSymbol: toPass });
+    const toPassSymbols = document.getElementsByClassName('topass');
+    this.setState({ 
+      firstSymbol: toPassSymbols[0],
+      currentSymbol: toPassSymbols[0],
+      lastSymbol: toPassSymbols[toPassSymbols.length - 1]
+    });
   }
 
   componentWillReceiveProps() {
     this.setState({
+      firstSymbol: null,
+      lastSymbol: null,
       currentSymbol: null,
       cursorCorrecting: 0,
       leftCursorPos: 0,
-      topCursorPos: 0 
+      topCursorPos: 0,
+      linesLastCursorPositions: []
     });
   }
 
   componentDidUpdate() {
     if (this.state.currentSymbol === null) {
-      const toPass = document.getElementsByClassName('topass')[0];
-      this.setState({ currentSymbol: toPass });
+      const toPassSymbols = document.getElementsByClassName('topass');
+      this.setState({ 
+        firstSymbol: toPassSymbols[0],
+        currentSymbol: toPassSymbols[0],
+        lastSymbol: toPassSymbols[toPassSymbols.length - 1]
+      });
+      
+      this.cursor.classList.remove('hide');
     }
   }
 
@@ -62,6 +78,11 @@ class Code extends Component {
     }
 
     if (parent.tagName === 'PRE') {
+      // the very last element reached
+      // if (domNode.nextElementSibling === null) {
+      //   return 'done';
+      // }
+
       next = domNode.nextElementSibling.firstElementChild;
       if (next !== null && next.classList.contains('topass')) {
         // console.log('first child of next');
@@ -75,8 +96,43 @@ class Code extends Component {
     return 'error';
   }
 
-  getPrevToPass() {
+  getPrevSymbol() {
+    const domNode = this.state.currentSymbol;
 
+    let prev = domNode.previousElementSibling;
+    if (prev !== null && hasPrevClasses(prev)) {
+      return prev;
+    }
+
+    const parent = domNode.parentElement;
+    if (parent.tagName !== 'PRE') {
+      prev = parent.previousElementSibling;
+      if (prev !== null && hasPrevClasses(prev)) {
+        // console.log('prev before parent');
+        return prev;
+      }
+
+      prev = parent.previousElementSibling.lastElementChild;
+      if (prev !== null && hasPrevClasses(prev)) {
+        // console.log('first child of prev before parent');
+        return prev;
+      }
+    }
+
+    if (parent.tagName === 'PRE') {
+      prev = domNode.previousElementSibling.lastElementChild;
+      if (prev !== null && hasPrevClasses(prev)) {
+        // console.log('last child of prev');
+        return prev;
+      }
+    }
+
+    function hasPrevClasses(domNode) {
+      return domNode.classList.contains('passed') || domNode.classList.contains('notpassed');
+    }
+
+    console.log('error in getPrevSymbol');
+    return 'error';
   }
 
   // for trivial keys
@@ -89,7 +145,12 @@ class Code extends Component {
 
     // when new line, do nothing if not typed 'enter'
     if (currentSymbolCode === 10 && typedSymbolCode !== 13) {
-      // TO DO change cursor to red then back to green
+      // TODO change cursor to red then back to green
+      return;
+    }
+    // when not new line, do nothing if not typed 'enter'
+    if (currentSymbolCode !== 10 && typedSymbolCode === 13) {
+      // TODO change cursor to red then back to green
       return;
     }
 
@@ -98,22 +159,35 @@ class Code extends Component {
       currentSymbol.classList.add('passed');
       // this.setState({ currentSymbol: currentSymbol.nextElementSibling });
     } else {
+      currentSymbol.classList.remove('topass');
       currentSymbol.classList.add('notpassed');
+    }
+
+    // if last symbol reached
+    if (this.state.currentSymbol === this.state.lastSymbol) {
+      console.log('Success!!!))) The last symbol reached');
+      this.cursor.classList.add('hide');
+      // TODO show congrats and little stats
+      return;
     }
 
     const next = this.getNextSymbol(currentSymbol);
     this.setState({ currentSymbol: next });
-    // console.log(next);
 
     // moving the cursor
 
     // when new line
     if (currentSymbolCode === 10 && typedSymbolCode === 13) {
+      const linesLastCursorPositions = this.state.linesLastCursorPositions;
+      linesLastCursorPositions.push(this.state.leftCursorPos);
+
       this.setState({ 
         cursorCorrecting: 0,
         leftCursorPos: 0,
-        topCursorPos: this.state.topCursorPos + 18
+        topCursorPos: this.state.topCursorPos + 18,
+        linesLastCursorPositions
       });
+
       return;
     }
 
@@ -135,10 +209,34 @@ class Code extends Component {
   handleWindowKeyDown(e) {
     // moving the cursor back
     if (e.which === 8) {
-      if (this.state.leftCursorPos <= 0) {
+      if (this.state.currentSymbol === this.state.firstSymbol) {
+        // TODO change cursor to red then back to green
+        console.log('very first matched');
         return;
       }
 
+      const currentSymbol = this.getPrevSymbol();
+      const currentSymbolCode = currentSymbol.innerText.charCodeAt(0);
+      // console.log(currentSymbol);
+
+      this.setState({ currentSymbol });
+
+      currentSymbol.classList.remove('notpassed');
+      currentSymbol.classList.add('topass');
+
+      if (currentSymbolCode === 10) {
+        const linesLastCursorPositions = this.state.linesLastCursorPositions;
+        // const prevLineCursorPos = linesLastCursorPositions[linesLastCursorPositions.length - 1];
+        this.setState({
+          cursorCorrecting: 0,
+          leftCursorPos: linesLastCursorPositions.pop(),
+          topCursorPos: this.state.topCursorPos - 18,
+          linesLastCursorPositions
+        });
+        return;
+      }
+
+      // when the same line
       if (this.state.cursorCorrecting === 0) {
         this.setState({ 
           cursorCorrecting: 1, 

@@ -8,8 +8,8 @@ class App extends Component {
     super(props);
 
     this.state = {
-      code: '// c\n\nvar days = 28;\nvar summ = 100;\n\nconsole.log(days * summ);'
-      // code: ''
+      code: '// code sample\n\nvar days = 28;\nvar summ = 100;\n\nconsole.log(days * summ);'
+      // code: '',
     };
 
     this.handleChooseFile = this.handleChooseFile.bind(this);
