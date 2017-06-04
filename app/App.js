@@ -27,7 +27,7 @@ class App extends Component {
     fileReader.readAsText(file);
 
     fileReader.onload = () => {
-      console.log(fileReader.result);
+      // console.log(fileReader.result);
       this.setState({ code: fileReader.result });
     };
   }

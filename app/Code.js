@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import DOMPurify from 'dompurify';
 import Prism from 'prismjs';
+// import hashSum from 'hash-sum';
 
 class Code extends Component {
   constructor(props) {
@@ -20,26 +21,57 @@ class Code extends Component {
 
     const toPass = document.getElementsByClassName('topass')[0];
     this.setState({ currentSymbol: toPass });
-    // console.log(toPass.innerText);
   }
 
-  getNextToPass(domNode) {
+  componentWillReceiveProps() {
+    this.setState({
+      currentSymbol: null,
+      cursorCorrecting: 0,
+      leftCursorPos: 0,
+      topCursorPos: 0 
+    });
+  }
+
+  componentDidUpdate() {
+    if (this.state.currentSymbol === null) {
+      const toPass = document.getElementsByClassName('topass')[0];
+      this.setState({ currentSymbol: toPass });
+    }
+  }
+
+  getNextSymbol(domNode) {
     let next = domNode.nextElementSibling;
     if (next !== null && next.classList.contains('topass')) {
+      // console.log('just next element');
       return next;
     }
 
-    next = domNode.parentElement.nextElementSibling;
-    if (next !== null && next.classList.contains('topass')) {
-      return next;
+    const parent = domNode.parentElement;
+    if (parent.tagName !== 'PRE') {
+      next = parent.nextElementSibling;
+      if (next !== null && next.classList.contains('topass')) {
+        // console.log('next after parent');
+        return next;
+      }
+
+      next = parent.nextElementSibling.firstElementChild;
+      if (next !== null && next.classList.contains('topass')) {
+        // console.log('first child of next after parent');
+        return next;
+      }
     }
 
-    // next = next.firstElementChild;
-    // if (next !== null && next.classList.contains('topass')) {
-    //   return next;
-    // }
+    if (parent.tagName === 'PRE') {
+      next = domNode.nextElementSibling.firstElementChild;
+      if (next !== null && next.classList.contains('topass')) {
+        // console.log('first child of next');
+        return next;
+      }
+    }
+    
+    // console.log(parent);
 
-    console.log('error in getNextToPass');
+    console.log('error in getNextSymbol');
     return 'error';
   }
 
@@ -69,7 +101,9 @@ class Code extends Component {
       currentSymbol.classList.add('notpassed');
     }
 
-    this.setState({ currentSymbol: this.getNextToPass(currentSymbol) });
+    const next = this.getNextSymbol(currentSymbol);
+    this.setState({ currentSymbol: next });
+    // console.log(next);
 
     // moving the cursor
 
@@ -121,7 +155,8 @@ class Code extends Component {
 
   render() {
     const highlightedCode = Prism.highlight(this.props.code, Prism.languages.javascript);
-    
+    // console.log(highlightedCode);
+    // console.log('------------------------------------------------------------------------');
     // wrap code with span
     const regexp = /(<\/?span.*?>)/;
     const tagsAndTextArr = highlightedCode.split(regexp);
