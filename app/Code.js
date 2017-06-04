@@ -7,8 +7,10 @@ class Code extends Component {
     super(props);
 
     this.state = {
+      currentSymbol: null,
       cursorCorrecting: 0,
-      symbolToPass: ''
+      leftCursorPos: 0,
+      topCursorPos: 0 
     };
   }
 
@@ -17,7 +19,7 @@ class Code extends Component {
     document.addEventListener('keydown', this.handleWindowKeyDown.bind(this));
 
     const toPass = document.getElementsByClassName('topass')[0];
-    this.setState({ symbolToPass: toPass });
+    this.setState({ currentSymbol: toPass });
     // console.log(toPass.innerText);
   }
 
@@ -48,59 +50,71 @@ class Code extends Component {
   // for trivial keys
   handleWindowKeyPress(e) {
     // cheking the symbol
-    const symbolToPass = this.state.symbolToPass;
+    const currentSymbol = this.state.currentSymbol;
 
     const typedSymbolCode = e.which;
-    const symbolToPassCode = symbolToPass.innerText.charCodeAt(0);
+    const currentSymbolCode = currentSymbol.innerText.charCodeAt(0);
 
     // when new line, do nothing if not typed 'enter'
-    if (symbolToPassCode === 10 && typedSymbolCode !== 13) {
+    if (currentSymbolCode === 10 && typedSymbolCode !== 13) {
+      // TO DO change cursor to red then back to green
       return;
     }
-    
-    if (typedSymbolCode === symbolToPassCode) {
-      symbolToPass.classList.remove('topass');
-      symbolToPass.classList.add('passed');
-      
-      // this.setState({ symbolToPass: symbolToPass.nextElementSibling });
+
+    if (typedSymbolCode === currentSymbolCode) {
+      currentSymbol.classList.remove('topass');
+      currentSymbol.classList.add('passed');
+      // this.setState({ currentSymbol: currentSymbol.nextElementSibling });
     } else {
-      symbolToPass.classList.add('notpassed');
+      currentSymbol.classList.add('notpassed');
     }
 
-    this.setState({ symbolToPass: this.getNextToPass(symbolToPass) });
+    this.setState({ currentSymbol: this.getNextToPass(currentSymbol) });
 
     // moving the cursor
-    const cursor = this.cursor;
-    const leftCursorPos = parseFloat(getComputedStyle(cursor).left);
-    const cursorCorrecting = this.state.cursorCorrecting;
 
-    if (cursorCorrecting === 1) {
-      cursor.style.left = `${leftCursorPos + 9.2}px`;
-      this.setState({ cursorCorrecting: 0 });
+    // when new line
+    if (currentSymbolCode === 10 && typedSymbolCode === 13) {
+      this.setState({ 
+        cursorCorrecting: 0,
+        leftCursorPos: 0,
+        topCursorPos: this.state.topCursorPos + 18
+      });
+      return;
+    }
+
+    // when the same line
+    if (this.state.cursorCorrecting === 1) {
+      this.setState({ 
+        cursorCorrecting: 0, 
+        leftCursorPos: this.state.leftCursorPos + 9.2
+      });
     } else {
-      cursor.style.left = `${leftCursorPos + 10}px`;
-      this.setState({ cursorCorrecting: 1 });
+      this.setState({ 
+        cursorCorrecting: 1, 
+        leftCursorPos: this.state.leftCursorPos + 10 
+      });
     }
   }
 
   // for backspace
   handleWindowKeyDown(e) {
+    // moving the cursor back
     if (e.which === 8) {
-      // moving the cursor
-      const cursor = this.cursor;
-      const leftCursorPos = parseFloat(getComputedStyle(cursor).left);
-      const cursorCorrecting = this.state.cursorCorrecting;
-
-      if (leftCursorPos <= 0) {
+      if (this.state.leftCursorPos <= 0) {
         return;
       }
 
-      if (cursorCorrecting === 0) {
-        cursor.style.left = `${leftCursorPos - 9.2}px`;
-        this.setState({ cursorCorrecting: 1 });
+      if (this.state.cursorCorrecting === 0) {
+        this.setState({ 
+          cursorCorrecting: 1, 
+          leftCursorPos: this.state.leftCursorPos - 9.2
+        });
       } else {
-        cursor.style.left = `${leftCursorPos - 10}px`;
-        this.setState({ cursorCorrecting: 0 });
+        this.setState({ 
+          cursorCorrecting: 0, 
+          leftCursorPos: this.state.leftCursorPos - 10 
+        });
       }
     }
   }
@@ -129,7 +143,11 @@ class Code extends Component {
       <div className="code-wrapper">
         <div className="code">
           <pre dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(codeToRender) }}></pre>
-          <span ref={el => this.cursor = el} className="cursor"></span>
+          <span 
+            style={{ left: `${this.state.leftCursorPos}px`, top: `${this.state.topCursorPos}px` }} 
+            ref={el => this.cursor = el} 
+            className="cursor">
+          </span>
         </div>
       </div>
     );
