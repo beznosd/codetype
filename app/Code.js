@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import DOMPurify from 'dompurify';
-import Prism from 'prismjs';
 // import hashSum from 'hash-sum'; //reached
 
 class Code extends Component {
@@ -50,7 +48,7 @@ class Code extends Component {
         currentSymbol: toPassSymbols[0],
         lastSymbol: toPassSymbols[toPassSymbols.length - 1]
       });
-      
+
       this.cursor.classList.remove('hide');
     }
   }
@@ -78,11 +76,6 @@ class Code extends Component {
     }
 
     if (parent.tagName === 'PRE') {
-      // the very last element reached
-      // if (domNode.nextElementSibling === null) {
-      //   return 'done';
-      // }
-
       next = domNode.nextElementSibling.firstElementChild;
       if (next !== null && next.classList.contains('topass')) {
         // console.log('first child of next');
@@ -90,8 +83,6 @@ class Code extends Component {
       }
     }
     
-    // console.log(parent);
-
     console.log('error in getNextSymbol');
     return 'error';
   }
@@ -252,30 +243,10 @@ class Code extends Component {
   }
 
   render() {
-    const highlightedCode = Prism.highlight(this.props.code, Prism.languages.javascript);
-    // console.log(highlightedCode);
-    // console.log('------------------------------------------------------------------------');
-    // wrap code with span
-    const regexp = /(<\/?span.*?>)/;
-    const tagsAndTextArr = highlightedCode.split(regexp);
-    let codeToRender = '';
-
-    for (let i = 0; i < tagsAndTextArr.length; i++) {
-      // if text element wrap each symbol with span
-      if (tagsAndTextArr[i] !== '' && !regexp.test(tagsAndTextArr[i])) {
-        let newHtml = '';
-        for (let j = 0; j < tagsAndTextArr[i].length; j++) {
-          newHtml += `<span class="char topass">${tagsAndTextArr[i][j]}</span>`;
-        }
-        tagsAndTextArr[i] = newHtml;
-      }
-      codeToRender += tagsAndTextArr[i];
-    }
-
     return (
       <div className="code-wrapper">
         <div className="code">
-          <pre dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(codeToRender) }}></pre>
+          <pre dangerouslySetInnerHTML={{ __html: this.props.code }}></pre>
           <span 
             style={{ left: `${this.state.leftCursorPos}px`, top: `${this.state.topCursorPos}px` }} 
             ref={el => this.cursor = el} 

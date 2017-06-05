@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import DOMPurify from 'dompurify';
+import Prism from 'prismjs';
 
 import Code from './Code';
 
@@ -8,7 +10,9 @@ class App extends Component {
     super(props);
 
     this.state = {
-      code: '// code sample\n\nvar days = 28;\nvar summ = 100;\n\nconsole.log(days * summ);'
+      // code: '// code sample\n\nvar days = 28;\nvar summ = 100;\n\nconsole.log(days * summ);'
+      // code: '<!DOCTYPE html>\n<html lang="en">\n</html>'
+      code: '// start typing\n// or\n// load own file\n\nconst date = new Date();\nconsole.log("Hello world!", date);\n\n// enjoy ;)'
       // code: '',
     };
 
@@ -28,8 +32,39 @@ class App extends Component {
 
     fileReader.onload = () => {
       // console.log(fileReader.result);
-      this.setState({ code: fileReader.result });
+      this.setState({ 
+        code: fileReader.result
+      });
     };
+  }
+
+  highlightCode(code) {
+    const highlightedCode = Prism.highlight(code, Prism.languages.javascript);
+    const regexpTag = /(<\/?span.*?>)/;
+    const tagsAndTextArr = highlightedCode.split(regexpTag);
+    const regexpSpecialChar = /^&.*;$/;
+    let codeToRender = '';
+
+    // wrap code characters with <span class='topass'>
+    for (let i = 0; i < tagsAndTextArr.length; i++) {
+      // if text element wrap each symbol with span
+      if (tagsAndTextArr[i] !== '' && !regexpTag.test(tagsAndTextArr[i])) {
+        let newHtml = '';
+        if (regexpSpecialChar.test(tagsAndTextArr[i])) {
+          // special characters
+          newHtml += `<span class="char topass">${tagsAndTextArr[i]}</span>`;
+        } else {
+          // simple words and symbols
+          for (let j = 0; j < tagsAndTextArr[i].length; j++) {
+            newHtml += `<span class="char topass">${tagsAndTextArr[i][j]}</span>`;
+          }
+        }
+        tagsAndTextArr[i] = newHtml;
+      }
+      codeToRender += tagsAndTextArr[i];
+    }
+
+    return codeToRender;
   }
 
   render() {
@@ -47,7 +82,7 @@ class App extends Component {
           <label className="load-file-button" htmlFor="file">LOAD FILE</label>
         </form>
         <br />
-        <Code code={this.state.code} />
+        <Code code={DOMPurify.sanitize(this.highlightCode(this.state.code))} />
       </div>
     );
   }
