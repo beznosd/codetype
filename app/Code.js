@@ -196,9 +196,45 @@ class Code extends Component {
     }
   }
 
-  // for backspace
+  // for backspace and tab
   handleWindowKeyDown(e) {
-    // moving the cursor back
+    // moving the cursor further if tab
+    if (e.which === 9) {
+      e.preventDefault();
+
+      const currentSymbol = this.state.currentSymbol;
+      const currentSymbolCode = currentSymbol.innerText.charCodeAt(0);
+      if (currentSymbolCode === 32) {
+        // count all next space
+        let counter = 0;
+        // console.log(currentSymbol.nextElementSibling.innerText.charCodeAt(0));
+        let currentEl = currentSymbol;
+        let summToAdd = this.state.leftCursorPos;
+        while (currentEl.innerText.charCodeAt(0) === 32) {
+          if (counter % 2) {
+            summToAdd += 9.2;
+          } else {
+            summToAdd += 10;
+          }
+          currentEl.classList.remove('topass');
+          currentEl.classList.add('passed');
+          currentEl = currentEl.nextElementSibling;
+          counter++;
+        }
+        if (counter === 1) {
+          // TODO change cursor to red then back to green
+          // single spaces for just for space
+        } else {
+          // move cursor through spaces ;)
+          this.setState({
+            leftCursorPos: this.state.leftCursorPos + summToAdd,
+            currentSymbol: this.getNextSymbol(currentEl.previousElementSibling)
+          });
+        }
+      }
+    }
+
+    // moving the cursor back if backspace
     if (e.which === 8) {
       if (this.state.currentSymbol === this.state.firstSymbol) {
         // TODO change cursor to red then back to green

@@ -10,9 +10,11 @@ class App extends Component {
     super(props);
 
     this.state = {
-      // code: '// code sample\n\nvar days = 28;\nvar summ = 100;\n\nconsole.log(days * summ);'
+      code: '// code sample\n\nvar days = 28;\nvar summ = 100;\n\nconsole.log(days * summ);'
       // code: '<!DOCTYPE html>\n<html lang="en">\n</html>'
-      code: '// start typing\n// or\n// load own file\n\nconst date = new Date();\nconsole.log("Hello world!", date);\n\n// enjoy ;)'
+      // code: '// start typing\n// or\n// load own file\n\nconst date = new Date();\nconsole.log("Hello world!", date);\n\n// enjoy ;)'
+      // code: 'while (true) {\n  // infinite loop\n}'
+
       // code: '',
     };
 
