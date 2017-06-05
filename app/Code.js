@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import hashSum from 'hash-sum'; //reached
+// import hashSum from 'hash-sum';
 
 class Code extends Component {
   constructor(props) {
@@ -50,6 +50,7 @@ class Code extends Component {
       });
 
       this.cursor.classList.remove('hide');
+      document.getElementsByClassName('stats')[0].classList.add('hide');
     }
   }
 
@@ -128,6 +129,8 @@ class Code extends Component {
 
   // for trivial keys
   handleWindowKeyPress(e) {
+    e.preventDefault();
+    
     // cheking the symbol
     const currentSymbol = this.state.currentSymbol;
 
@@ -148,7 +151,6 @@ class Code extends Component {
     if (typedSymbolCode === currentSymbolCode) {
       currentSymbol.classList.remove('topass');
       currentSymbol.classList.add('passed');
-      // this.setState({ currentSymbol: currentSymbol.nextElementSibling });
     } else {
       currentSymbol.classList.remove('topass');
       currentSymbol.classList.add('notpassed');
@@ -156,8 +158,9 @@ class Code extends Component {
 
     // if last symbol reached
     if (this.state.currentSymbol === this.state.lastSymbol) {
-      console.log('Success!!!))) The last symbol reached');
+      // console.log('Success!!!))) The last symbol reached');
       this.cursor.classList.add('hide');
+      document.getElementsByClassName('stats')[0].classList.remove('hide');
       // TODO show congrats and little stats
       return;
     }
@@ -182,6 +185,15 @@ class Code extends Component {
       return;
     }
 
+    // when tab symbol reached
+    if (currentSymbolCode === 9 && typedSymbolCode === 9) {
+      console.log('test');
+      this.setState({ 
+        leftCursorPos: this.state.leftCursorPos + currentSymbol.offsetWidth
+      });
+      return;
+    }
+
     // when the same line
     if (this.state.cursorCorrecting === 1) {
       this.setState({ 
@@ -198,12 +210,15 @@ class Code extends Component {
 
   // for backspace and tab
   handleWindowKeyDown(e) {
-    // moving the cursor further if tab
+    // moving the cursor further if 'tab' key pressed
     if (e.which === 9) {
       e.preventDefault();
 
       const currentSymbol = this.state.currentSymbol;
       const currentSymbolCode = currentSymbol.innerText.charCodeAt(0);
+      if (currentSymbolCode === 9) {
+        this.handleWindowKeyPress(e);
+      }
       if (currentSymbolCode === 32) {
         // count all next space
         let counter = 0;
@@ -234,7 +249,7 @@ class Code extends Component {
       }
     }
 
-    // moving the cursor back if backspace
+    // moving the cursor back if 'backspace' key pressed
     if (e.which === 8) {
       if (this.state.currentSymbol === this.state.firstSymbol) {
         // TODO change cursor to red then back to green

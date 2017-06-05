@@ -8,18 +8,21 @@ import Code from './Code';
 class App extends Component {
   constructor(props) {
     super(props);
+    
+    const defaultCode = '// start typing\n// or\n// load own file\n\nconst date = new Date();\nconsole.log("Hello world!", date);\n\n// create issues on github if you will find a bug\n// and enjoy ;)';
+    const code = localStorage.getItem('code') || defaultCode;
 
     this.state = {
-      code: '// code sample\n\nvar days = 28;\nvar summ = 100;\n\nconsole.log(days * summ);'
+      // code: '// code sample\n\nvar days = 28;\nvar summ = 100;\n\nconsole.log(days * summ);'
       // code: '<!DOCTYPE html>\n<html lang="en">\n</html>'
-      // code: '// start typing\n// or\n// load own file\n\nconst date = new Date();\nconsole.log("Hello world!", date);\n\n// enjoy ;)'
       // code: 'while (true) {\n  // infinite loop\n}'
-
+      code
       // code: '',
     };
 
     this.handleChooseFile = this.handleChooseFile.bind(this);
     this.handleLoadFile = this.handleLoadFile.bind(this);
+    this.handelLoadNewFile = this.handelLoadNewFile.bind(this);
   }
 
   handleChooseFile() {
@@ -27,17 +30,26 @@ class App extends Component {
   }
 
   handleLoadFile() {
-    const file = this.fileInput.files[0];
+    let file = this.fileInput.files[0];
+    if (!file) {
+      file = this.fileInput1.files[0];
+    }
     const fileReader = new FileReader();
     
     fileReader.readAsText(file);
 
     fileReader.onload = () => {
       // console.log(fileReader.result);
+      localStorage.setItem('code', fileReader.result);
       this.setState({ 
         code: fileReader.result
       });
     };
+  }
+
+  handelLoadNewFile(evt) {
+    evt.preventDefault();
+    this.fileInput.click();
   }
 
   highlightCode(code) {
@@ -81,10 +93,17 @@ class App extends Component {
             id="file"
             hidden
           />
-          <label className="load-file-button" htmlFor="file">LOAD FILE</label>
+          <label className="load-file-button" htmlFor="file">Load file</label>
         </form>
         <br />
         <Code code={DOMPurify.sanitize(this.highlightCode(this.state.code))} />
+        <div className="stats hide">
+          <form style={{ textAlign: 'center' }}>
+            <a className="again-link" href="/">Start again &#8634;</a>
+            <span className="or">or</span>
+            <a onClick={this.handelLoadNewFile} className="load-file-button" href="#">Load new file</a>
+          </form>
+        </div>
       </div>
     );
   }

@@ -11,7 +11,8 @@ form {
   margin-bottom: 20px;
 }
 
-.load-file-button {
+.load-file-button,
+.again-link {
   border: 2px solid salmon;
   font-size: 16px;
   color: salmon;
@@ -19,15 +20,28 @@ form {
   font-family: monospace;
   border-radius: 2px;
   cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s;
+  text-transform: uppercase;
+  margin: 20px;
 }
 
-.load-file-button:hover {
-  opacity: 0.9;
+.load-file-button:hover,
+.again-link:hover {
+  color: white;
+  background: salmon;
+}
+
+.or {
+  font-family: monospace;
+  text-transform: uppercase;
+  font-size: 1.1rem;
 }
 
 .code-wrapper {
   padding: 20px;
   border-top: 1px solid salmon;
+  /*border-bottom: 1px solid salmon;*/
 }
 
 .code {
@@ -58,4 +72,11 @@ form {
 
 .hide {
   display: none;
+}
+
+/* Stats */
+
+.stats {
+  border-top: 1px solid salmon;
+  text-align: center;
 }
