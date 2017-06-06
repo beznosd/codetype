@@ -2,6 +2,7 @@
 
 Typing practice for developers.
 Built for training blind printing of code and improving typing speed.
+https://beznosd.github.io/codetype/
 
 ## Getting started
 
