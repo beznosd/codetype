@@ -3,11 +3,10 @@
 Typing practice for coders.
 Built for training blind printing of code and improving typing speed.
 
-## Brunch app
+## Getting started
 
 This is a HTML5 application, built with [Brunch](http://brunch.io).
 
-### Getting started
 * Install (if you don't have them):
     * [Node.js](http://nodejs.org): `brew install node` on OS X
     * [Brunch](http://brunch.io): `npm install -g brunch`
@@ -19,3 +18,7 @@ This is a HTML5 application, built with [Brunch](http://brunch.io).
     * `public/` dir is fully auto-generated and served by HTTP server.  Write your code in `app/` dir.
     * Place static files you want to be copied from `app/assets/` to `public/`.
     * [Brunch site](http://brunch.io), [Getting started guide](https://github.com/brunch/brunch-guide#readme)
+
+## License
+
+[MIT](https://www.tldrlegal.com/l/mit) Copyright (c) 2016-2017 Dima Beznos
