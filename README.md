@@ -1,12 +1,17 @@
-# Brunch app
+# Codetype
+
+Typing practice for coders.
+Built for training blind printing of code and improving typing speed.
+
+## Brunch app
 
 This is a HTML5 application, built with [Brunch](http://brunch.io).
 
-## Getting started
+### Getting started
 * Install (if you don't have them):
     * [Node.js](http://nodejs.org): `brew install node` on OS X
     * [Brunch](http://brunch.io): `npm install -g brunch`
-    * Brunch plugins and app dependencies: `npm install`
+    * App dependencies: `npm install`
 * Run:
     * `npm start` — watches the project with continuous rebuild. This will also launch HTTP server with [pushState](https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history).
     * `npm run build` — builds minified project for production
