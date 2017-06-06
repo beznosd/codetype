@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import hashSum from 'hash-sum';
 
 class Code extends Component {
   constructor(props) {
@@ -9,7 +8,7 @@ class Code extends Component {
       firstSymbol: null,
       lastSymbol: null,
       currentSymbol: null,
-      cursorCorrecting: 0,
+      currentSymbolNum: 0,
       leftCursorPos: 0,
       topCursorPos: 0,
       linesLastCursorPositions: []
@@ -27,7 +26,6 @@ class Code extends Component {
       firstSymbol: null,
       lastSymbol: null,
       currentSymbol: null,
-      cursorCorrecting: 0,
       leftCursorPos: 0,
       topCursorPos: 0,
       linesLastCursorPositions: []
@@ -47,79 +45,17 @@ class Code extends Component {
     this.setState({ 
       firstSymbol: toPassSymbols[0],
       currentSymbol: toPassSymbols[0],
-      lastSymbol: toPassSymbols[toPassSymbols.length - 1]
+      lastSymbol: toPassSymbols[toPassSymbols.length - 1],
+      currentSymbolNum: 0
     });
   }
 
-  getNextSymbol(domNode) {
-    let next = domNode.nextElementSibling;
-    if (next !== null && next.classList.contains('topass')) {
-      // console.log('just next element');
-      return next;
-    }
-
-    const parent = domNode.parentElement;
-    if (parent.tagName !== 'PRE') {
-      next = parent.nextElementSibling;
-      if (next !== null && next.classList.contains('topass')) {
-        // console.log('next after parent');
-        return next;
-      }
-
-      next = parent.nextElementSibling.firstElementChild;
-      if (next !== null && next.classList.contains('topass')) {
-        // console.log('first child of next after parent');
-        return next;
-      }
-    }
-
-    if (parent.tagName === 'PRE') {
-      next = domNode.nextElementSibling.firstElementChild;
-      if (next !== null && next.classList.contains('topass')) {
-        // console.log('first child of next');
-        return next;
-      }
-    }
-    
-    throw new Error('Next symbol was not found');
+  getNextSymbol() {
+    return document.getElementsByClassName('char')[this.state.currentSymbolNum + 1];
   }
 
   getPrevSymbol() {
-    const domNode = this.state.currentSymbol;
-
-    let prev = domNode.previousElementSibling;
-    if (prev !== null && hasPrevClasses(prev)) {
-      return prev;
-    }
-
-    const parent = domNode.parentElement;
-    if (parent.tagName !== 'PRE') {
-      prev = parent.previousElementSibling;
-      if (prev !== null && hasPrevClasses(prev)) {
-        // console.log('prev before parent');
-        return prev;
-      }
-
-      prev = parent.previousElementSibling.lastElementChild;
-      if (prev !== null && hasPrevClasses(prev)) {
-        // console.log('first child of prev before parent');
-        return prev;
-      }
-    }
-
-    if (parent.tagName === 'PRE') {
-      prev = domNode.previousElementSibling.lastElementChild;
-      if (prev !== null && hasPrevClasses(prev)) {
-        // console.log('last child of prev');
-        return prev;
-      }
-    }
-
-    function hasPrevClasses(node) {
-      return node.classList.contains('passed') || node.classList.contains('notpassed');
-    }
-
-    throw new Error('Prev symbol was not found');
+    return document.getElementsByClassName('char')[this.state.currentSymbolNum - 1];
   }
 
   // for simple keys
@@ -153,12 +89,13 @@ class Code extends Component {
     if (this.state.currentSymbol === this.state.lastSymbol) {
       this.cursor.classList.add('hide');
       document.getElementsByClassName('stats')[0].classList.remove('hide');
+      window.scrollTo(0, document.body.scrollHeight);
       // TODO show congrats and little stats
       return;
     }
 
     // get next symbol and set it as current
-    const next = this.getNextSymbol(currentSymbol);
+    const next = this.getNextSymbol();
     this.setState({ currentSymbol: next });
 
     // moving the cursor to the next postition
@@ -169,10 +106,10 @@ class Code extends Component {
       linesLastCursorPositions.push(this.state.leftCursorPos);
 
       this.setState({ 
-        cursorCorrecting: 0,
         leftCursorPos: 0,
         topCursorPos: this.state.topCursorPos + 18,
-        linesLastCursorPositions
+        linesLastCursorPositions,
+        currentSymbolNum: this.state.currentSymbolNum + 1
       });
       return;
     }
@@ -180,23 +117,17 @@ class Code extends Component {
     // when tab symbol reached
     if (currentSymbolCode === 9) {
       this.setState({ 
-        leftCursorPos: this.state.leftCursorPos + currentSymbol.offsetWidth
+        leftCursorPos: this.state.leftCursorPos + currentSymbol.offsetWidth,
+        currentSymbolNum: this.state.currentSymbolNum + 1
       });
       return;
     }
 
     // when the same line
-    if (this.state.cursorCorrecting === 1) {
-      this.setState({ 
-        cursorCorrecting: 0, 
-        leftCursorPos: this.state.leftCursorPos + 9.2
-      });
-    } else {
-      this.setState({ 
-        cursorCorrecting: 1, 
-        leftCursorPos: this.state.leftCursorPos + 10 
-      });
-    }
+    this.setState({ 
+      leftCursorPos: this.state.leftCursorPos + currentSymbol.offsetWidth,
+      currentSymbolNum: this.state.currentSymbolNum + 1 
+    });
   }
 
   // for backspace and tab
@@ -222,11 +153,7 @@ class Code extends Component {
 
         // calculating the distance to move the cursor and changing classes of passed spaces
         while (currentEl.innerText.charCodeAt(0) === 32) {
-          if (counter % 2) {
-            summToAdd += 9.2;
-          } else {
-            summToAdd += 10;
-          }
+          summToAdd += currentEl.offsetWidth;
           currentEl.classList.remove('topass');
           currentEl.classList.add('passed');
           currentEl = currentEl.nextElementSibling;
@@ -238,9 +165,14 @@ class Code extends Component {
           // single spaces just for space
         } else {
           // move cursor through spaces ;)
+          // TODO fix this double setState
+          this.setState({
+            currentSymbolNum: this.state.currentSymbolNum + (counter - 1)
+          });
           this.setState({
             leftCursorPos: this.state.leftCursorPos + summToAdd,
-            currentSymbol: this.getNextSymbol(currentEl.previousElementSibling)
+            currentSymbol: this.getNextSymbol(),
+            currentSymbolNum: this.state.currentSymbolNum + 1
           });
         }
       }
@@ -266,34 +198,19 @@ class Code extends Component {
       if (currentSymbolCode === 10) {
         const linesLastCursorPositions = this.state.linesLastCursorPositions;
         this.setState({
-          cursorCorrecting: 0,
           leftCursorPos: linesLastCursorPositions.pop(),
           topCursorPos: this.state.topCursorPos - 18,
-          linesLastCursorPositions
-        });
-        return;
-      }
-
-      // when tab symbol reached
-      if (currentSymbolCode === 9) {
-        this.setState({ 
-          leftCursorPos: this.state.leftCursorPos - currentSymbol.offsetWidth
+          linesLastCursorPositions,
+          currentSymbolNum: this.state.currentSymbolNum - 1 
         });
         return;
       }
 
       // when the same line
-      if (this.state.cursorCorrecting === 0) {
-        this.setState({ 
-          cursorCorrecting: 1, 
-          leftCursorPos: this.state.leftCursorPos - 9.2
-        });
-      } else {
-        this.setState({ 
-          cursorCorrecting: 0, 
-          leftCursorPos: this.state.leftCursorPos - 10 
-        });
-      }
+      this.setState({ 
+        leftCursorPos: this.state.leftCursorPos - currentSymbol.offsetWidth,
+        currentSymbolNum: this.state.currentSymbolNum - 1
+      });
     }
   }
 

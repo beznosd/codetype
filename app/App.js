@@ -9,6 +9,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     
+    // localStorage.setItem('code', '');
     const defaultCode = '// start typing\n// or\n// load own file\n\nconst date = new Date();\nconsole.log("Hello world!", date);\n\n// you\'re welcome to create an issue on github if you found a bug';
     const code = localStorage.getItem('code') || defaultCode;
 
@@ -27,8 +28,9 @@ class App extends Component {
 
   handleLoadFile() {
     const file = this.fileInput.files[0];
-    const fileReader = new FileReader();
+    if (!file) return;
 
+    const fileReader = new FileReader();
     fileReader.readAsText(file);
 
     fileReader.onload = () => {
@@ -54,20 +56,26 @@ class App extends Component {
       if (tagsAndTextArr[i] !== '' && !regexpTag.test(tagsAndTextArr[i])) {
         let newHtml = '';
         if (regexpSpecialChar.test(tagsAndTextArr[i])) {
+          // console.log(tagsAndTextArr[i]);
           // special characters
           const specialCharsArr = tagsAndTextArr[i].match(/&[a-z]*;/g);
-          // if we have on special character without other symbol
+          // if we have one special character without other symbols
           if (specialCharsArr.length === 1 && specialCharsArr[0] === tagsAndTextArr[i]) {
             newHtml += `<span class="char topass">${tagsAndTextArr[i]}</span>`;
-          // if we have special character with other symbol, for example '<='
-          // works now just for two symbols
+          // if we have special character with other symbols
           } else {
             const otherCharsArr = tagsAndTextArr[i].split(regexpSpecialChar);
+            // console.log(otherCharsArr);
             for (let j = 0; j < otherCharsArr.length; j++) {
-              if (otherCharsArr[j] === '') {
+              if (otherCharsArr[j] === '' && j < specialCharsArr.length) {
                 newHtml += `<span class="char topass">${specialCharsArr[0]}</span>`;
-              } else {
-                newHtml += `<span class="char topass">${otherCharsArr[j]}</span>`;
+                continue;
+              }
+              for (let k = 0; k < otherCharsArr[j].length; k++) {
+                newHtml += `<span class="char topass">${otherCharsArr[j][k]}</span>`;
+              }
+              if (j !== otherCharsArr.length - 1) {
+                newHtml += `<span class="char topass">${specialCharsArr[0]}</span>`;
               }
             }
           }
