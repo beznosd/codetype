@@ -9,54 +9,43 @@ class App extends Component {
   constructor(props) {
     super(props);
     
-    const defaultCode = '// start typing\n// or\n// load own file\n\nconst date = new Date();\nconsole.log("Hello world!", date);\n\n// create issues on github if you will find a bug\n// and enjoy ;)';
+    const defaultCode = '// start typing\n// or\n// load own file\n\nconst date = new Date();\nconsole.log("Hello world!", date);\n\n// you\'re welcome to create an issue on github if you found a bug';
     const code = localStorage.getItem('code') || defaultCode;
 
     this.state = {
-      // code: '// code sample\n\nvar days = 28;\nvar summ = 100;\n\nconsole.log(days * summ);'
-      // code: '<!DOCTYPE html>\n<html lang="en">\n</html>'
-      // code: 'while (true) {\n  // infinite loop\n}'
       code
-      // code: '',
     };
 
     this.handleChooseFile = this.handleChooseFile.bind(this);
     this.handleLoadFile = this.handleLoadFile.bind(this);
-    this.handelLoadNewFile = this.handelLoadNewFile.bind(this);
   }
 
-  handleChooseFile() {
+  handleChooseFile(evt) {
+    evt.preventDefault();
     this.fileInput.click();
   }
 
   handleLoadFile() {
-    let file = this.fileInput.files[0];
-    if (!file) {
-      file = this.fileInput1.files[0];
-    }
+    const file = this.fileInput.files[0];
     const fileReader = new FileReader();
-    
+
     fileReader.readAsText(file);
 
     fileReader.onload = () => {
-      // console.log(fileReader.result);
       localStorage.setItem('code', fileReader.result);
+
       this.setState({ 
         code: fileReader.result
       });
     };
   }
 
-  handelLoadNewFile(evt) {
-    evt.preventDefault();
-    this.fileInput.click();
-  }
-
+  // TODO improve function, stucks on regexps in js
   highlightCode(code) {
     const highlightedCode = Prism.highlight(code, Prism.languages.javascript);
     const regexpTag = /(<\/?span.*?>)/;
     const tagsAndTextArr = highlightedCode.split(regexpTag);
-    const regexpSpecialChar = /^&.*;$/;
+    const regexpSpecialChar = /&[a-z]*;/;
     let codeToRender = '';
 
     // wrap code characters with <span class='topass'>
@@ -66,7 +55,22 @@ class App extends Component {
         let newHtml = '';
         if (regexpSpecialChar.test(tagsAndTextArr[i])) {
           // special characters
-          newHtml += `<span class="char topass">${tagsAndTextArr[i]}</span>`;
+          const specialCharsArr = tagsAndTextArr[i].match(/&[a-z]*;/g);
+          // if we have on special character without other symbol
+          if (specialCharsArr.length === 1 && specialCharsArr[0] === tagsAndTextArr[i]) {
+            newHtml += `<span class="char topass">${tagsAndTextArr[i]}</span>`;
+          // if we have special character with other symbol, for example '<='
+          // works now just for two symbols
+          } else {
+            const otherCharsArr = tagsAndTextArr[i].split(regexpSpecialChar);
+            for (let j = 0; j < otherCharsArr.length; j++) {
+              if (otherCharsArr[j] === '') {
+                newHtml += `<span class="char topass">${specialCharsArr[0]}</span>`;
+              } else {
+                newHtml += `<span class="char topass">${otherCharsArr[j]}</span>`;
+              }
+            }
+          }
         } else {
           // simple words and symbols
           for (let j = 0; j < tagsAndTextArr[i].length; j++) {
@@ -84,7 +88,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <form style={{ textAlign: 'center' }}>
+        <form>
           <input 
             ref={element => this.fileInput = element} 
             onChange={this.handleLoadFile}
@@ -93,15 +97,15 @@ class App extends Component {
             id="file"
             hidden
           />
-          <label className="load-file-button" htmlFor="file">Load file</label>
+          <label className="button" htmlFor="file">Load file</label>
         </form>
         <br />
         <Code code={DOMPurify.sanitize(this.highlightCode(this.state.code))} />
         <div className="stats hide">
-          <form style={{ textAlign: 'center' }}>
-            <a className="again-link" href="/">Start again &#8634;</a>
+          <form>
+            <a className="button" href="/">Start again &#8634;</a>
             <span className="or">or</span>
-            <a onClick={this.handelLoadNewFile} className="load-file-button" href="#">Load new file</a>
+            <button onClick={this.handleChooseFile} className="button">Load new file</button>
           </form>
         </div>
       </div>

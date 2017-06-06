@@ -2,17 +2,13 @@ body {
   margin: 0;
 }
 
-#code {
-  font-size: 1.3rem;
-}
-
 form {
   margin-top: 40px;
   margin-bottom: 20px;
+  text-align: center;
 }
 
-.load-file-button,
-.again-link {
+.button {
   border: 2px solid salmon;
   font-size: 16px;
   color: salmon;
@@ -23,11 +19,11 @@ form {
   text-decoration: none;
   transition: all 0.25s;
   text-transform: uppercase;
+  background: white;
   margin: 20px;
 }
 
-.load-file-button:hover,
-.again-link:hover {
+.button:hover {
   color: white;
   background: salmon;
 }
@@ -41,7 +37,6 @@ form {
 .code-wrapper {
   padding: 20px;
   border-top: 1px solid salmon;
-  /*border-bottom: 1px solid salmon;*/
 }
 
 .code {
@@ -53,7 +48,6 @@ form {
 }
 
 .char.notpassed {
-  /*color: red;*/
   background: rgba(255, 0, 0, 0.5);
 }
 
@@ -68,15 +62,16 @@ form {
   top: 0;
 }
 
-/* Helpers */
-
-.hide {
-  display: none;
-}
 
 /* Stats */
 
 .stats {
   border-top: 1px solid salmon;
   text-align: center;
+}
+
+/* Helpers */
+
+.hide {
+  display: none;
 }
