@@ -111,7 +111,7 @@ class App extends Component {
         <Code code={DOMPurify.sanitize(this.highlightCode(this.state.code))} />
         <div className="stats hide">
           <form>
-            <a className="button" href="/">Start again &#8634;</a>
+            <a className="button" href="https://beznosd.github.io/codetype/">Start again &#8634;</a>
             <span className="or">or</span>
             <button onClick={this.handleChooseFile} className="button">Load new file</button>
           </form>
