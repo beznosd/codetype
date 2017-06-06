@@ -26,6 +26,7 @@ class Code extends Component {
       firstSymbol: null,
       lastSymbol: null,
       currentSymbol: null,
+      currentSymbolNum: 0,
       leftCursorPos: 0,
       topCursorPos: 0,
       linesLastCursorPositions: []
@@ -46,7 +47,6 @@ class Code extends Component {
       firstSymbol: toPassSymbols[0],
       currentSymbol: toPassSymbols[0],
       lastSymbol: toPassSymbols[toPassSymbols.length - 1],
-      currentSymbolNum: 0
     });
   }
 
@@ -218,7 +218,7 @@ class Code extends Component {
     return (
       <div className="code-wrapper">
         <div className="code">
-          <pre dangerouslySetInnerHTML={{ __html: this.props.code }}></pre>
+          <pre ref={el => this.code = el}  dangerouslySetInnerHTML={{ __html: this.props.code }}></pre>
           <span 
             style={{ left: `${this.state.leftCursorPos}px`, top: `${this.state.topCursorPos}px` }} 
             ref={el => this.cursor = el} 

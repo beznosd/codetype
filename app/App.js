@@ -34,11 +34,16 @@ class App extends Component {
     fileReader.readAsText(file);
 
     fileReader.onload = () => {
-      localStorage.setItem('code', fileReader.result);
+      const result = fileReader.result.trim();
 
-      this.setState({ 
-        code: fileReader.result
-      });
+      if (result === this.state.code) {
+        window.location.href = 'https://beznosd.github.io/codetype/';
+        return;
+      }
+
+      localStorage.setItem('code', result);
+      this.setState({ code: result });
+      this.fileInput.value = '';
     };
   }
 
